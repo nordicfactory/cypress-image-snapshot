@@ -12,12 +12,48 @@ const updateSnapshots = Cypress.env('updateSnapshots') || false;
 const failOnSnapshotDiff =
   typeof Cypress.env('failOnSnapshotDiff') === 'undefined';
 
+function getPixelDiff(diffRatio, diffPixelCount) {
+  return `Image was ${diffRatio *
+    100}% different from saved snapshot with ${diffPixelCount} different pixels.`;
+}
+
+function getErrorMessage(
+  diffSize,
+  allowSizeMismatch,
+  imageDimensions,
+  diffOutputPath,
+  diffRatio,
+  diffPixelCount
+) {
+  const seeDiff = `See diff for details: ${diffOutputPath}`;
+
+  const pixelDiff = getPixelDiff(diffRatio, diffPixelCount);
+
+  if (diffSize) {
+    const newSnapshotDimensions = `${imageDimensions.receivedWidth}x${
+      imageDimensions.receivedHeight
+    }`;
+    const oldSnapshotDimensions = `${imageDimensions.baselineWidth}x${
+      imageDimensions.baselineHeight
+    }`;
+    if (!allowSizeMismatch) {
+      return `Image size of new snapshot (${newSnapshotDimensions}) different than saved snapshot size (${oldSnapshotDimensions}).\n
+        ${seeDiff}`;
+    }
+    return `${pixelDiff}\n
+        New snapshot was also ${newSnapshotDimensions} when saved snapshot was ${oldSnapshotDimensions}.\n
+        ${seeDiff}`;
+  }
+  return `${pixelDiff}\n${seeDiff}`;
+}
+
 export function matchImageSnapshotCommand(defaultOptions) {
   return function matchImageSnapshot(subject, maybeName, commandOptions) {
     const options = {
       ...defaultOptions,
       ...((typeof maybeName === 'string' ? commandOptions : maybeName) || {}),
     };
+    const allowSizeMismatch = !!options.allowSizeMismatch;
 
     cy.task(MATCH, {
       screenshotsFolder,
@@ -43,17 +79,14 @@ export function matchImageSnapshotCommand(defaultOptions) {
           diffOutputPath,
         }) => {
           if (!pass && !added && !updated) {
-            const message = diffSize
-              ? `Image size (${imageDimensions.baselineWidth}x${
-                  imageDimensions.baselineHeight
-                }) different than saved snapshot size (${
-                  imageDimensions.receivedWidth
-                }x${
-                  imageDimensions.receivedHeight
-                }).\nSee diff for details: ${diffOutputPath}`
-              : `Image was ${diffRatio *
-                  100}% different from saved snapshot with ${diffPixelCount} different pixels.\nSee diff for details: ${diffOutputPath}`;
-
+            const message = getErrorMessage(
+              diffSize,
+              allowSizeMismatch,
+              imageDimensions,
+              diffOutputPath,
+              diffRatio,
+              diffPixelCount
+            );
             if (failOnSnapshotDiff) {
               throw new Error(message);
             } else {
