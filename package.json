@@ -1,8 +1,8 @@
 {
-  "name": "cypress-image-snapshot",
+  "name": "@oaknorthai/cypress-image-snapshot",
   "version": "4.0.1",
   "description": "Cypress bindings for jest-image-snapshot.",
-  "repository": "https://github.com/palmerhq/cypress-image-snapshot",
+  "repository": "https://github.com/OakNorthAI/cypress-image-snapshot",
   "author": "Jack Cross <jack@palmer.net>",
   "license": "MIT",
   "files": [
@@ -16,7 +16,7 @@
     "build": "babel src --out-dir .",
     "test": "jest",
     "lint": "eslint src",
-    "prepublish": "npm run build",
+    "prepublish": "npm run lint && npm run test && npm run build",
     "changeset": "changeset",
     "release": "changeset publish"
   },
@@ -91,5 +91,8 @@
       "<rootDir>/examples/",
       "<rootDir>/node_modules/"
     ]
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   }
 }

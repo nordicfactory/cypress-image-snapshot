@@ -1,5 +1,8 @@
-# Cypress Image Snapshot
+# Oaknorth Cypress Image Snapshot
 
+Forked from https://github.com/jaredpalmer/cypress-image-snapshot to add fixes/tweaks.
+
+# Cypress Image Snapshot
 
 Cypress Image Snapshot binds [jest-image-snapshot](https://github.com/americanexpress/jest-image-snapshot)'s image diffing logic to [Cypress.io](https://cypress.io) commands. **The goal is to catch visual regressions during integration tests.**
 
@@ -33,7 +36,7 @@ When using `cypress run` and `--reporter cypress-image-snapshot/reporter`, diffs
 Install from npm
 
 ```bash
-npm install --save-dev cypress-image-snapshot
+npm install --save-dev @oaknorthai/cypress-image-snapshot
 ```
 
 then add the following in your project's `<rootDir>/cypress/plugins/index.js`:
@@ -41,7 +44,7 @@ then add the following in your project's `<rootDir>/cypress/plugins/index.js`:
 ```js
 const {
   addMatchImageSnapshotPlugin,
-} = require('cypress-image-snapshot/plugin');
+} = require('@oaknorthai/cypress-image-snapshot/plugin');
 
 module.exports = (on, config) => {
   addMatchImageSnapshotPlugin(on, config);
@@ -51,7 +54,7 @@ module.exports = (on, config) => {
 and in `<rootDir>/cypress/support/commands.js` add:
 
 ```js
-import { addMatchImageSnapshotCommand } from 'cypress-image-snapshot/command';
+import { addMatchImageSnapshotCommand } from '@oaknorthai/cypress-image-snapshot/command';
 
 addMatchImageSnapshotCommand();
 ```
@@ -134,7 +137,7 @@ You'll then want to set up a `cypress-reporters.json` which may look a little li
 
 ```json
 {
-  "reporterEnabled": "spec, mocha-junit-reporter, cypress-image-snapshot/reporter",
+  "reporterEnabled": "spec, mocha-junit-reporter, @oaknorthai/cypress-image-snapshot/reporter",
   "mochaJunitReporterReporterOptions": {
     "mochaFile": "cypress/results/results-[hash].xml"
   }
