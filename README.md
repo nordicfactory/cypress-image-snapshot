@@ -1,5 +1,8 @@
-# Cypress Image Snapshot
+# Oaknorth Cypress Image Snapshot
 
+Forked from https://github.com/jaredpalmer/cypress-image-snapshot to add fixes/tweaks.
+
+# Cypress Image Snapshot
 
 Cypress Image Snapshot binds [jest-image-snapshot](https://github.com/americanexpress/jest-image-snapshot)'s image diffing logic to [Cypress.io](https://cypress.io) commands. **The goal is to catch visual regressions during integration tests.**
 
