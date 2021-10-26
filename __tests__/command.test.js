@@ -5,8 +5,15 @@
  * LICENSE file in the root directory of this source tree.
  */
 
+const DEFAULT_ENV_VARS = {
+  // Confusingly, any value of `failOnSnapshotDiff` other than undefined is currently treated as truthy
+  failOnSnapshotDiff: undefined,
+};
+
 global.Cypress = {
-  env: () => false,
+  env: envVar => {
+    return envVar in DEFAULT_ENV_VARS ? DEFAULT_ENV_VARS[envVar] : false;
+  },
   log: () => null,
   config: () => '/cypress/screenshots',
   Commands: {
@@ -37,10 +44,10 @@ const commandOptions = {
 };
 
 describe('command', () => {
-  it('should pass options through', () => {
+  it('should pass options through', async () => {
     global.cy.task = jest.fn().mockResolvedValue({ pass: true });
 
-    boundMatchImageSnapshot(subject, commandOptions);
+    await boundMatchImageSnapshot(subject, commandOptions);
 
     expect(cy.task).toHaveBeenCalledWith('Matching image snapshot', {
       screenshotsFolder: '/cypress/screenshots',
@@ -52,15 +59,15 @@ describe('command', () => {
     });
   });
 
-  it('should pass', () => {
+  it('should pass', async () => {
     global.cy.task = jest.fn().mockResolvedValue({ pass: true });
 
-    expect(
+    await expect(
       boundMatchImageSnapshot(subject, commandOptions)
     ).resolves.not.toThrow();
   });
 
-  it('should fail', () => {
+  it('should fail', async () => {
     global.cy.task = jest.fn().mockResolvedValue({
       pass: false,
       added: false,
@@ -70,9 +77,11 @@ describe('command', () => {
       diffOutputPath: 'cheese',
     });
 
-    expect(
-      boundMatchImageSnapshot(subject, commandOptions)
-    ).rejects.toThrowErrorMatchingSnapshot();
+    await expect(boundMatchImageSnapshot(subject, commandOptions)).rejects
+      .toThrowErrorMatchingInlineSnapshot(`
+"Image was 10% different from saved snapshot with 10 different pixels.
+See diff for details: cheese"
+`);
   });
 
   it('should add command', () => {
