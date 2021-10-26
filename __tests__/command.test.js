@@ -84,6 +84,35 @@ See diff for details: cheese"
 `);
   });
 
+  it('should fail for a size difference', async () => {
+    global.cy.task = jest.fn().mockResolvedValue({
+      pass: false,
+      added: false,
+      updated: false,
+      diffRatio: 0.1,
+      diffPixelCount: 10,
+      diffOutputPath: 'cheese',
+      diffSize: true,
+      imageDimensions: {
+        receivedWidth: 100,
+        receivedHeight: 200,
+        baselineWidth: 100,
+        baselineHeight: 150,
+      },
+    });
+
+    await expect(
+      boundMatchImageSnapshot(subject, {
+        ...commandOptions,
+        allowSizeMismatch: false,
+      })
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`
+"Image size of new snapshot (100x200) different than saved snapshot size (100x150).
+
+        See diff for details: cheese"
+`);
+  });
+
   it('should add command', () => {
     Cypress.Commands.add.mockReset();
     addMatchImageSnapshotCommand();
