@@ -8,6 +8,7 @@
 const DEFAULT_ENV_VARS = {
   // Confusingly, any value of `failOnSnapshotDiff` other than undefined is currently treated as truthy
   failOnSnapshotDiff: undefined,
+  requireSnapshots: true,
 };
 
 global.Cypress = {
@@ -110,6 +111,22 @@ See diff for details: cheese"
 "Image size of new snapshot (100x200) different than saved snapshot size (100x150).
 
         See diff for details: cheese"
+`);
+  });
+
+  it('should fail if requireSnapshots is true and a snapshot is added', async () => {
+    global.cy.task = jest.fn().mockResolvedValue({
+      pass: false,
+      added: true,
+      updated: false,
+      diffRatio: 0.1,
+      diffPixelCount: 10,
+      diffOutputPath: 'cheese',
+    });
+    await expect(boundMatchImageSnapshot(subject, 'snap name', commandOptions))
+      .rejects.toThrowErrorMatchingInlineSnapshot(`
+"New snapshot snap name was added, but 'requireSnapshots' was set to true.
+            This is likely because this test was run in a CI environment in which snapshots should already be committed."
 `);
   });
 
