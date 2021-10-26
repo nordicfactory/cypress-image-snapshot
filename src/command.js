@@ -92,6 +92,8 @@ export function matchImageSnapshotCommand(defaultOptions) {
             } else {
               Cypress.log({ message });
             }
+          } else {
+            Cypress.log({ message: getPixelDiff(diffRatio, diffPixelCount) });
           }
         }
       );
