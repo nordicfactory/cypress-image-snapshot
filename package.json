@@ -6,8 +6,10 @@
   "author": "Jack Cross <jack@palmer.net>",
   "license": "MIT",
   "files": [
-    "*.js"
+    "*.js",
+    "*.d.ts"
   ],
+  "types": "./index.d.ts",
   "engines": {
     "node": ">=8"
   },
