@@ -46,7 +46,7 @@
     "rimraf": "^2.6.2"
   },
   "peerDependencies": {
-    "cypress": "^4.5.0 - 8"
+    "cypress": "^4.5.0 - 9"
   },
   "husky": {
     "hooks": {
