@@ -1,5 +1,15 @@
 # cypress-image-snapshot
 
+## 4.2.0
+
+### Minor Changes
+
+- [`55a08ba`](https://github.com/OakNorthAI/cypress-image-snapshot/commit/55a08baab592cb42ffeabc6e706f4b29ce32bdd4) [#8](https://github.com/OakNorthAI/cypress-image-snapshot/pull/8) Thanks [@lexanth](https://github.com/lexanth)! - Add typescript typedefs
+
+### Patch Changes
+
+- [`e33da80`](https://github.com/OakNorthAI/cypress-image-snapshot/commit/e33da80c05fbf1c351ead8fa28d98cde5f027370) [#9](https://github.com/OakNorthAI/cypress-image-snapshot/pull/9) Thanks [@lexanth](https://github.com/lexanth)! - Widen cypress peerDependency to include v9
+
 ## 4.1.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@oaknorthai/cypress-image-snapshot",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "Cypress bindings for jest-image-snapshot.",
   "repository": "https://github.com/OakNorthAI/cypress-image-snapshot",
   "author": "Jack Cross <jack@palmer.net>",
