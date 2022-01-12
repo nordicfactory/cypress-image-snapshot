@@ -1,66 +1,73 @@
 trigger:
-    - main
+- main
 pr:
-    - main
+- main
 
 variables:
-    - name: npmPackageArtifact
-      value: 'npmPackageArtifact'
+- name: npmPackageArtifact
+  value: 'npmPackageArtifact'
 
 pool:
-    vmImage: 'ubuntu-latest'
+  vmImage: 'ubuntu-latest'
 
 stages:
-    # Build
-    - stage: build
-      jobs:
-          - job: build
+# Build
+- stage: build
+  jobs:
+  - job: build
 
-            steps:
-                - task: npmAuthenticate@0
-                  inputs:
-                      workingFile: .npmrc
+    steps:
 
-                - task: Npm@1
-                  displayName: 'Install NPM Packages'
-                  inputs:
-                      command: custom
-                      verbose: false
-                      customCommand: 'ci'
+    - task: npmAuthenticate@0
+      inputs:
+        workingFile: .npmrc
 
-                - task: Npm@1
-                  displayName: 'Build Package'
-                  inputs:
-                      command: custom
-                      verbose: false
-                      customCommand: 'run build'
+    - task: Npm@1
+      displayName: 'Install NPM Packages'
+      inputs:
+        command: custom
+        verbose: false
+        customCommand: 'ci'
 
-                - task: PublishPipelineArtifact@1
-                  displayName: 'Publish Artifact: $(npmPackageArtifact)'
-                  inputs:
-                      targetPath: dist
-                      artifact: $(npmPackageArtifact)
+    - task: Npm@1
+      displayName: 'Build Package'
+      inputs:
+        command: custom
+        verbose: false
+        customCommand: 'run build'
 
-    #Publish
-    - stage: Publish
-      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Artifact: $(npmPackageArtifact)'
+      inputs:
+        targetPath: dist
+        artifact: $(npmPackageArtifact)
 
-      jobs:
-          - deployment:
-            displayName: 'publish: npm package'
-            environment: 'cypress-image-snapshot'
+#Publish
+- stage: Publish
+  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-            strategy:
-                runOnce:
-                    deploy:
-                        steps:
-                            - download: current
+  jobs:
+  - deployment:
+    displayName: 'publish: npm package'
+    environment: 'cypress-image-snapshot'
 
-                            - task: Npm@1
-                              displayName: 'NPM publish'
-                              inputs:
-                                  command: publish
-                                  workingDir: '$(Pipeline.Workspace)/$(npmPackageArtifact)'
-                                  verbose: false
-                                  publishRegistry: useFeed
-                                  publishFeed: 'b751e459-d0c0-4fc0-80f5-ce07777bfc4c'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          - download: current
+
+          - task: npmAuthenticate@0
+            inputs:
+              workingFile: .npmrc
+
+          - task: Npm@1
+            displayName: 'NPM publish'
+            inputs:
+              command: publish
+              workingDir: '$(Pipeline.Workspace)/$(npmPackageArtifact)'
+              verbose: false
+              publishRegistry: useFeed
+              publishFeed: 'b751e459-d0c0-4fc0-80f5-ce07777bfc4c'
+
