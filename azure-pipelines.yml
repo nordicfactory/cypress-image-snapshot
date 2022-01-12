@@ -1,69 +1,66 @@
 trigger:
-- main
+    - main
 pr:
-- main
+    - main
 
 variables:
-- name: npmPackageArtifact
-  value: 'npmPackageArtifact'
+    - name: npmPackageArtifact
+      value: 'npmPackageArtifact'
 
 pool:
-  vmImage: 'ubuntu-latest'
+    vmImage: 'ubuntu-latest'
 
 stages:
-# Build
-- stage: build
-  jobs:
-  - job: build
+    # Build
+    - stage: build
+      jobs:
+          - job: build
 
-    steps:
+            steps:
+                - task: npmAuthenticate@0
+                  inputs:
+                      workingFile: .npmrc
 
-    - task: npmAuthenticate@0
-      inputs:
-        workingFile: .npmrc
+                - task: Npm@1
+                  displayName: 'Install NPM Packages'
+                  inputs:
+                      command: custom
+                      verbose: false
+                      customCommand: 'ci'
 
-    - task: Npm@1
-      displayName: 'Install NPM Packages'
-      inputs:
-        command: custom
-        verbose: false
-        customCommand: 'ci'
+                - task: Npm@1
+                  displayName: 'Build Package'
+                  inputs:
+                      command: custom
+                      verbose: false
+                      customCommand: 'run build'
 
-    - task: Npm@1
-      displayName: 'Build Package'
-      inputs:
-        command: custom
-        verbose: false
-        customCommand: 'run build'
+                - task: PublishPipelineArtifact@1
+                  displayName: 'Publish Artifact: $(npmPackageArtifact)'
+                  inputs:
+                      targetPath: dist
+                      artifact: $(npmPackageArtifact)
 
-    - task: PublishPipelineArtifact@1
-      displayName: 'Publish Artifact: $(npmPackageArtifact)'
-      inputs:
-        targetPath: dist/comments
-        artifact: $(npmPackageArtifact)
+    #Publish
+    - stage: Publish
+      condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
 
-#Publish
-- stage: Publish
-  condition: and(succeeded(), ne(variables['Build.Reason'], 'PullRequest'))
+      jobs:
+          - deployment:
+            displayName: 'publish: npm package'
+            environment: 'cypress-image-snapshot'
 
-  jobs:
-  - deployment:
-    displayName: 'publish: npm package'
-    environment: 'cypress-image-snapshot'
+            strategy:
+                runOnce:
+                    deploy:
+                        steps:
+                            - download: current
 
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-
-          - download: current
-
-          - task: Npm@1
-            displayName: 'NPM publish'
-            inputs:
-              command: publish
-              workingDir: '$(Pipeline.Workspace)/$(npmPackageArtifact)'
-              verbose: false
-              publishRegistry: useFeed
-              publishFeed: 'b751e459-d0c0-4fc0-80f5-ce07777bfc4c'
-
+                            - task: Npm@1
+                              displayName: 'NPM publish'
+                              inputs:
+                                  command: publish
+                                  workingDir: '$(Pipeline.Workspace)/$(npmPackageArtifact)'
+                                  verbose: false
+                                  publishRegistry: useFeed
+                                  publishFeed: 'b751e459-d0c0-4fc0-80f5-ce07777bfc4c'
