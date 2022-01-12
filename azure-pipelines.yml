@@ -58,10 +58,6 @@ stages:
 
           - download: current
 
-          - task: npmAuthenticate@0
-            inputs:
-              workingFile: .npmrc
-
           - task: Npm@1
             displayName: 'NPM publish'
             inputs:
