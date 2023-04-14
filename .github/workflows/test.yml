@@ -28,8 +28,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Authenticate with private NPM package
-        run: echo "https://pkgs.dev.azure.com/bannerflow/_packaging/bannerflow-npm/npm/registry/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
 
       - name: Install deps, build, and test
         run: |
