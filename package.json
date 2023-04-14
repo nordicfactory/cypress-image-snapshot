@@ -1,6 +1,6 @@
 {
     "name": "@bannerflow/cypress-image-snapshot",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "description": "Cypress bindings for jest-image-snapshot.",
     "repository": "https://github.com/nordicfactory/cypress-image-snapshot",
     "author": "Jack Cross <jack@palmer.net>",
@@ -46,7 +46,7 @@
         "rimraf": "^2.6.2"
     },
     "peerDependencies": {
-        "cypress": "^10.0.3"
+        "cypress": "^12.0.0"
     },
     "husky": {
         "hooks": {
